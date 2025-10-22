@@ -49,7 +49,7 @@ header {
   z-index: 1000;
   border-bottom: 1px solid var(--color-border-light);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: background 0.3s, border-color 0.3s;
+  transition: background 0.3s, border-color 0.3s, padding 0.3s ease;
 }
 body.dark header {
   background: rgba(26, 26, 26, 0.75);
@@ -60,6 +60,7 @@ header h1 {
   font-weight: 700;
   cursor: pointer;
   color: var(--color-primary);
+  transition: font-size 0.3s ease;
 }
 header nav {
   display: flex;
@@ -70,7 +71,7 @@ header nav a {
   text-decoration: none;
   font-weight: 500;
   color: var(--color-text-dark);
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, font-size 0.3s ease;
 }
 body.dark header nav a { color: var(--color-text-light); }
 header nav a:hover { color: var(--color-primary); }
@@ -83,7 +84,7 @@ header nav a:hover { color: var(--color-primary); }
   background: var(--color-primary);
   color: white;
   font-weight: 500;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, transform 0.2s ease, padding 0.3s ease;
   user-select: none;
 }
 .theme-toggle:hover { 
@@ -96,6 +97,7 @@ main {
   padding: 100px 5% 40px;
   max-width: 1280px; 
   margin: 0 auto;
+  transition: padding-top 0.3s ease;
 }
 
 /* Card (Página Inicial) */
@@ -219,6 +221,7 @@ body.dark .module-item {
 .module-item span {
   font-size: 1.1rem;
   font-weight: 600;
+  word-break: break-word; /* Garante que nomes longos quebrem a linha */
 }
 
 /* ESTILO "AULA ASSISTIDA" (course.html) */
@@ -267,6 +270,7 @@ body.dark .video-container {
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: left;
 }
 /* Ícone de "Assistido" no Título da Aula */
 #watched-check {
@@ -459,28 +463,31 @@ body.dark .sidebar .active {
   }
 }
 
+/* MELHORIA NO HEADER RESPONSIVO */
 @media (max-width: 600px) {
-  /* Header responsivo */
   header {
-    flex-direction: column;
     padding: 10px 4%;
   }
   header h1 {
-    font-size: 1.4rem;
-    margin-bottom: 5px;
+    font-size: 1.2rem; /* Fonte menor */
   }
-  header nav {
-    width: 100%;
-    justify-content: space-around;
+  header nav a {
+    font-size: 0.9rem; /* Fonte menor */
+    margin-left: 10px;
   }
-  header nav a { font-size: 0.9rem; margin-left: 10px;}
-  .theme-toggle { margin-left: 10px; padding: 4px 8px; }
+  .theme-toggle {
+    margin-left: 10px;
+    padding: 4px 8px; /* Botão menor */
+  }
 
   main {
-    padding: 110px 4% 20px; /* Aumenta padding-top */
+    padding: 80px 4% 20px; /* Reduz padding-top */
   }
   .video-container iframe { height: 250px; }
   .video-container h2 { font-size: 1.2rem; }
+  .course-header h2 { font-size: 1.5rem; }
+  .course-header p { font-size: 1rem; }
+  .module-item span { font-size: 1rem; }
 }
 
 @media (max-width: 500px) {
