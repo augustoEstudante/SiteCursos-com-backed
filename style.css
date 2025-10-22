@@ -1,18 +1,23 @@
-/* :root define variáveis de cor para o tema */
+/* :root (TEMA NOVO - Azul "Premium") */
 :root {
-  --color-primary: #008037; /* Verde "Estratégia" */
-  --color-primary-dark: #00662c;
-  --color-primary-rgb: 0, 128, 55; /* Para o "glow" com transparência */
-  --color-text-light: #f1f5f9;
-  --color-text-dark: #1f2937;
-  --color-bg-light: #f4f7f6;
+  --color-primary: #00aaff; /* Azul Elétrico */
+  --color-primary-dark: #0088cc;
+  --color-primary-rgb: 0, 170, 255; /* Para o "glow" */
+  
+  /* Cores de Fundo (Claro) */
+  --color-bg-light: #f0f2f5; /* Cinza muito claro */
   --color-surface-light: #ffffff;
-  --color-bg-dark: #1a1a1a;
-  --color-surface-dark: #2c2c2c;
-  --color-border-light: #e2e8f0;
-  --color-border-dark: #374151;
+  --color-border-light: #e4e6eb;
+  --color-text-light: #1c1e21; /* Texto escuro */
+
+  /* Cores de Fundo (Escuro) */
+  --color-bg-dark: #0a192f; /* Azul Marinho profundo */
+  --color-surface-dark: #172a45; /* Azul Marinho mais claro */
+  --color-border-dark: #304a6d;
+  --color-text-dark: #f0f2f5; /* Texto claro */
+  
   --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-hover: 0 10px 25px rgba(var(--color-primary-rgb), 0.15);
+  --shadow-hover: 0 10px 25px rgba(var(--color-primary-rgb), 0.2);
   --shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -24,17 +29,17 @@
 }
 
 body {
-  background: linear-gradient(160deg, var(--color-bg-light) 0%, #ffffff 70%);
-  color: var(--color-text-dark);
+  background: var(--color-bg-light);
+  color: var(--color-text-light);
   transition: background 0.3s ease, color 0.3s ease;
   line-height: 1.6;
 }
 body.dark {
-  background: linear-gradient(160deg, var(--color-bg-dark) 0%, #111 70%);
-  color: var(--color-text-light);
+  background: var(--color-bg-dark);
+  color: var(--color-text-dark);
 }
 
-/* Header (Efeito "Glassmorphism" Acentuado) */
+/* Header (COM SEU LOGO) */
 header {
   position: fixed;
   top: 0;
@@ -45,23 +50,34 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 5%;
+  padding: 10px 5%; /* Menor altura */
   z-index: 1000;
   border-bottom: 1px solid var(--color-border-light);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: background 0.3s, border-color 0.3s, padding 0.3s ease;
 }
 body.dark header {
-  background: rgba(26, 26, 26, 0.75);
+  background: rgba(23, 42, 69, 0.75); /* Azul escuro semi-transparente */
   border-color: var(--color-border-dark);
 }
-header h1 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  cursor: pointer;
-  color: var(--color-primary);
-  transition: font-size 0.3s ease;
+/* Logo no Header */
+header .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
+header .logo img {
+  height: 40px; /* Ajuste a altura do seu logo */
+  width: auto;
+  margin-right: 10px;
+}
+header .logo span {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
 header nav {
   display: flex;
   align-items: center;
@@ -70,10 +86,10 @@ header nav a {
   margin-left: 25px;
   text-decoration: none;
   font-weight: 500;
-  color: var(--color-text-dark);
+  color: var(--color-text-light);
   transition: color 0.3s ease, font-size 0.3s ease;
 }
-body.dark header nav a { color: var(--color-text-light); }
+body.dark header nav a { color: var(--color-text-dark); }
 header nav a:hover { color: var(--color-primary); }
 
 .theme-toggle {
@@ -100,7 +116,7 @@ main {
   transition: padding-top 0.3s ease;
 }
 
-/* Card (Página Inicial) */
+/* Card (Página Inicial - Mais "Elaborado") */
 .container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -132,16 +148,21 @@ body.dark .card {
   height: 170px;
   object-fit: cover;
 }
-.card h3 { font-size: 1.25rem; margin: 15px; }
+.card h3 { 
+  font-size: 1.25rem; 
+  margin: 15px; 
+  color: var(--color-text-light);
+}
+body.dark .card h3 { color: var(--color-text-dark); }
 .card p {
   font-size: 0.9rem;
   margin: 0 15px 15px;
-  color: #4b5563;
+  color: #65676b;
   flex-grow: 1;
 }
-body.dark .card p { color: #d1d5db; }
+body.dark .card p { color: #b0b3b8; }
 .card button {
-  margin: 0 15px 15px;
+  margin: 15px 15px 15px; /* Botão de acessar */
   padding: 10px 18px;
   border: none;
   border-radius: 8px;
@@ -158,7 +179,36 @@ body.dark .card p { color: #d1d5db; }
   box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.3);
 }
 
-/* Página do Curso (course.html) - Design mais limpo */
+/* NOVO: Barra de Progresso */
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #65676b;
+  padding: 0 15px 5px;
+}
+body.dark .progress-info {
+  color: #b0b3b8;
+}
+.progress-bar-container {
+  height: 8px;
+  background: var(--color-border-light);
+  border-radius: 4px;
+  margin: 0 15px 15px;
+  overflow: hidden;
+}
+body.dark .progress-bar-container {
+  background: var(--color-border-dark);
+}
+.progress-bar {
+  height: 100%;
+  width: 0%; /* Controlado pelo JS */
+  background: var(--color-primary);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* Página do Curso (course.html) */
 .course-header {
   padding: 25px;
   margin-bottom: 30px;
@@ -174,13 +224,20 @@ body.dark .course-header {
 }
 .course-header h2 { font-size: 2rem; color: var(--color-primary); }
 .course-header p { font-size: 1.1rem; margin-top: 5px; }
+.course-header .progress-info {
+  padding: 10px 0 5px;
+}
+.course-header .progress-bar-container {
+  margin: 0 0 10px;
+}
 
-/* Lista de Módulos (MAIS ELABORADO - com contador) */
+
+/* Lista de Módulos (Visual da sua imagem) */
 .module-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  counter-reset: module-counter; /* Inicia o contador */
+  counter-reset: module-counter;
 }
 .module-item {
   display: flex;
@@ -195,8 +252,8 @@ body.dark .course-header {
   position: relative;
 }
 .module-item::before {
-  content: counter(module-counter); /* Pega o número do contador */
-  counter-increment: module-counter; /* Soma +1 */
+  content: counter(module-counter);
+  counter-increment: module-counter;
   background: var(--color-primary);
   color: white;
   font-weight: 600;
@@ -221,10 +278,9 @@ body.dark .module-item {
 .module-item span {
   font-size: 1.1rem;
   font-weight: 600;
-  word-break: break-word; /* Garante que nomes longos quebrem a linha */
+  word-break: break-word;
 }
-
-/* ESTILO "AULA ASSISTIDA" (course.html) */
+/* Estilo "Aula Assistida" (course.html) */
 .module-item.watched {
   opacity: 0.6;
 }
@@ -238,8 +294,58 @@ body.dark .module-item {
   font-size: 1.5rem;
   font-weight: bold;
 }
-.module-item.watched:hover {
-  opacity: 0.8;
+.module-item.watched:hover { opacity: 0.8; }
+
+
+/* NOVO: SKELETON LOADER */
+.skeleton-item {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background: var(--color-surface-light);
+  border-radius: 10px;
+  border: 1px solid var(--color-border-light);
+  position: relative;
+  overflow: hidden; /* Para a animação */
+}
+body.dark .skeleton-item {
+  background: var(--color-surface-dark);
+  border-color: var(--color-border-dark);
+}
+.skeleton-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+.skeleton-text {
+  height: 20px;
+  width: 100%;
+  background: #e0e0e0;
+  border-radius: 4px;
+}
+body.dark .skeleton-icon, body.dark .skeleton-text {
+  background: var(--color-border-dark);
+}
+/* Animação "Shimmer" (brilho) */
+.skeleton-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: shimmer 1.5s infinite;
+}
+body.dark .skeleton-item::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+}
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 
@@ -272,7 +378,6 @@ body.dark .video-container {
   justify-content: center;
   text-align: left;
 }
-/* Ícone de "Assistido" no Título da Aula */
 #watched-check {
   color: var(--color-primary);
   font-size: 1.5rem;
@@ -324,7 +429,7 @@ body.dark .video-container iframe { border: 1px solid var(--color-border-dark); 
 .controls-container {
   margin-top: 30px;
   display: grid;
-  grid-template-columns: 1fr; /* Mobile-first */
+  grid-template-columns: 1fr;
   gap: 20px;
 }
 .materiais-container, .watch-container {
@@ -368,17 +473,14 @@ body.dark .materiais-container, body.dark .watch-container {
   pointer-events: none;
   opacity: 0.7;
 }
-/* Estilo do botão "Marcar como não assistido" */
 .watch-container button.watched {
   background: #4b5563;
   color: #f1f5f9;
 }
-.watch-container button.watched:hover {
-  background: #374151;
-}
+.watch-container button.watched:hover { background: #374151; }
 
 
-/* Sidebar (aula.html) - Polida */
+/* Sidebar (aula.html) - "STICKY" */
 .sidebar {
   padding: 20px;
   background: var(--color-surface-light);
@@ -387,6 +489,8 @@ body.dark .materiais-container, body.dark .watch-container {
   border: 1px solid var(--color-border-light);
   align-self: start;
   height: fit-content;
+  position: sticky;
+  top: 100px; /* Abaixo do header */
 }
 body.dark .sidebar { 
   background: var(--color-surface-dark);
@@ -408,20 +512,19 @@ body.dark .sidebar h3 { border-color: var(--color-border-dark); }
   font-weight: 500;
   word-break: break-word;
   border: 1px solid transparent;
-  position: relative; /* Para o ícone de check */
-  padding-right: 30px; /* Espaço para o ícone */
+  position: relative;
+  padding-right: 30px;
 }
 .sidebar div:hover {
-  background: #eef2ff;
+  background: #e4e6eb;
   color: var(--color-primary);
   border-color: var(--color-primary);
 }
 body.dark .sidebar div:hover {
-  background: #374151;
-  color: var(--color-text-light);
+  background: var(--color-border-dark);
+  color: var(--color-text-dark);
   border-color: var(--color-primary);
 }
-/* Aula Ativa */
 .sidebar .active {
   background: var(--color-primary);
   color: white;
@@ -433,8 +536,6 @@ body.dark .sidebar .active {
   color: white;
   border-color: var(--color-primary-dark);
 }
-
-/* ESTILO "AULA ASSISTIDA" (Sidebar) */
 .sidebar .watched {
   opacity: 0.7;
 }
@@ -448,40 +549,51 @@ body.dark .sidebar .active {
   font-weight: bold;
 }
 .sidebar .active.watched::after {
-  color: white; /* Ícone fica branco na aula ativa */
+  color: white;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border-light);
+  color: #8a8d91;
+}
+body.dark footer {
+  border-color: var(--color-border-dark);
+  color: #8a8d91;
 }
 
 
-/* ########## RESPONSIVIDADE (CELULAR) ########## */
+/* RESPONSIVIDADE (CELULAR) */
 @media (min-width: 900px) {
   .course-layout {
     grid-template-columns: 2.5fr 1fr;
   }
   .video-container iframe { height: 500px; }
   .controls-container {
-    grid-template-columns: 1fr 1fr; /* Lado a lado em desktop */
+    grid-template-columns: 1fr 1fr;
   }
 }
-
-/* MELHORIA NO HEADER RESPONSIVO */
 @media (max-width: 600px) {
   header {
     padding: 10px 4%;
   }
-  header h1 {
-    font-size: 1.2rem; /* Fonte menor */
-  }
+  header .logo img { height: 30px; }
+  header .logo span { font-size: 1rem; }
+  
   header nav a {
-    font-size: 0.9rem; /* Fonte menor */
+    font-size: 0.9rem;
     margin-left: 10px;
   }
   .theme-toggle {
     margin-left: 10px;
-    padding: 4px 8px; /* Botão menor */
+    padding: 4px 8px;
   }
 
   main {
-    padding: 80px 4% 20px; /* Reduz padding-top */
+    padding: 80px 4% 20px;
   }
   .video-container iframe { height: 250px; }
   .video-container h2 { font-size: 1.2rem; }
@@ -489,9 +601,7 @@ body.dark .sidebar .active {
   .course-header p { font-size: 1rem; }
   .module-item span { font-size: 1rem; }
 }
-
 @media (max-width: 500px) {
-  /* Botões de navegação empilhados */
   .nav-buttons {
     flex-direction: column;
     gap: 10px;

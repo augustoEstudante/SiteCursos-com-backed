@@ -4,17 +4,20 @@ const cursos = [
     titulo: "Matemática Básica",
     descricao: "Aprenda os fundamentos da matemática...",
     thumbnail: "imagens/matematica.jpg",
+    totalAulas: 3 // <<< ADICIONEI ISSO (Mude para o total real)
   },
   {
     id: "portugues-concursos", // ID = nome do arquivo em /cursos/
     titulo: "Português para Concursos",
     descricao: "Domine a gramática...",
     thumbnail: "imagens/portugues.png",
+    totalAulas: 2 // <<< ADICIONEI ISSO (Mude para o total real)
   },
   {
     id: "curso-intensivo", // ID = nome do arquivo em /cursos/
     titulo: "Curso Intensivo (Universo Narrado)",
-    descricao: "Um curso completo com 80 módulos...",
-    thumbnail: "IMAGES_CURSOS/CURSO1.jpg", // Caminho da sua imagem
+    descricao: "Curso de matematica do universo narrado",
+    thumbnail: "IMAGES_CURSOS/CURSO1.jpg", 
+    totalAulas: 86 // <<< ADICIONEI ISSO (O seu curso tem 86 aulas)
   }
 ];

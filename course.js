@@ -2,31 +2,36 @@
 const params = new URLSearchParams(window.location.search);
 const courseId = params.get('id');
 
-// 1. Encontra o curso no "data.js" (que já foi carregado)
+// 1. Encontra o curso no "data.js"
 const cursoInfo = cursos.find(c => c.id === courseId);
 
 const titleEl = document.getElementById('course-title');
 const descEl = document.getElementById('course-description');
 const modulosContainer = document.getElementById('modulos-container');
 
-// --- NOVO: Helper para pegar aulas assistidas ---
+// Elementos da Barra de Progresso
+const progressInfo = document.getElementById('course-progress-info');
+const progressBar = document.getElementById('course-progress-bar');
+const progressPercent = document.getElementById('progress-percent');
+const progressCount = document.getElementById('progress-count');
+const progressBarInner = document.getElementById('progress-bar-inner');
+
 function getWatchedLessons() {
   const watched = localStorage.getItem('watchedLessons');
   return watched ? JSON.parse(watched) : {};
 }
-// ----------------------------------------------
 
 if (cursoInfo && titleEl && modulosContainer) {
-  // 2. Preenche o cabeçalho com as infos do "data.js"
+  // 2. Preenche o cabeçalho imediatamente
   titleEl.textContent = cursoInfo.titulo;
   descEl.textContent = cursoInfo.descricao;
   document.title = cursoInfo.titulo;
 
-  // 3. Função para carregar dinamicamente o script da pasta /cursos/
+  // 3. Carrega o script de dados do curso
   loadCourseData(courseId);
 
 } else {
-  location.href = 'index.html'; // Curso não encontrado
+  location.href = 'index.html'; 
 }
 
 function loadCourseData(id) {
@@ -34,24 +39,34 @@ function loadCourseData(id) {
   script.src = `cursos/${id}.js`; // Ex: cursos/curso-intensivo.js
   document.body.appendChild(script);
 
-  // 4. QUANDO o script carregar, a variável "cursoData" existirá
+  // 4. QUANDO o script carregar...
   script.onload = function() {
     
-    // --- NOVO: Pega o progresso salvo ---
+    // Pega o progresso salvo
     const watchedLessons = getWatchedLessons();
-    const watchedArray = watchedLessons[id] || []; // Pega o array desse curso
-    // ------------------------------------
+    const watchedArray = watchedLessons[id] || [];
+    const completed = watchedArray.length;
+    const total = cursoInfo.totalAulas || 0;
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-    // 5. Agora podemos usar a variável "cursoData" para listar os módulos
+    // 5. Atualiza a Barra de Progresso do Cabeçalho
+    progressPercent.textContent = `${percent}% Concluído`;
+    progressCount.textContent = `${completed} / ${total} aulas`;
+    progressBarInner.style.width = `${percent}%`;
+    progressInfo.style.display = 'flex'; // Mostra os elementos
+    progressBar.style.display = 'block'; // Mostra os elementos
+
+    // 6. LIMPA os skeletons
+    modulosContainer.innerHTML = '';
+
+    // 7. Lista os módulos reais
     cursoData.modulos.forEach((modulo, index) => {
       const item = document.createElement('div');
       item.className = 'module-item';
       
-      // --- NOVO: Verifica se a aula foi assistida ---
       if (watchedArray.includes(index)) {
         item.classList.add('watched');
       }
-      // ----------------------------------------------
 
       item.innerHTML = `<span>${modulo.titulo}</span>`;
       
@@ -63,6 +78,6 @@ function loadCourseData(id) {
   };
 
   script.onerror = function() {
-    modulosContainer.innerHTML = "<p>Erro ao carregar os módulos do curso.</p>";
+    modulosContainer.innerHTML = "<p>Erro ao carregar os módulos do curso. Verifique o nome do arquivo em /cursos/</p>";
   };
 }

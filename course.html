@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<link rel="icon" href="IMAGES_CURSOS/CURSO1.jpg" type="image/jpeg">
 <title>Módulos do Curso</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <header>
-  <h1>🎓 Meus Cursos</h1>
+  <a href="index.html" class="logo">
+    <img src="IMAGES_CURSOS/curso2.png" alt="Universo Narrado Logo">
+    <span>Meus Cursos</span>
+  </a>
   <nav>
     <a href="index.html">Home</a>
     <span id="theme-toggle" class="theme-toggle">Tema</span>
@@ -17,14 +22,43 @@
 
 <main>
   <div class="course-header">
-    <h2 id="course-title"></h2>
-    <p id="course-description"></p>
+    <h2 id="course-title">Carregando...</h2>
+    <p id="course-description">Buscando informações do curso...</p>
+    
+    <div class="progress-info" id="course-progress-info" style="display: none;">
+      <span id="progress-percent">0%</span>
+      <span id="progress-count">0 / 0 aulas</span>
+    </div>
+    <div class="progress-bar-container" id="course-progress-bar" style="display: none;">
+      <div class="progress-bar" id="progress-bar-inner" style="width: 0%;"></div>
+    </div>
   </div>
   
   <h3>Aulas do Curso</h3>
+  
   <div class="module-list" id="modulos-container">
+    <div class="skeleton-item">
+      <div class="skeleton-icon"></div>
+      <div class="skeleton-text"></div>
     </div>
-</main>
+    <div class="skeleton-item">
+      <div class="skeleton-icon"></div>
+      <div class="skeleton-text"></div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skeleton-icon"></div>
+      <div class="skeleton-text" style="width: 80%;"></div>
+    </div>
+    <div class="skeleton-item">
+      <div class="skeleton-icon"></div>
+      <div class="skeleton-text" style="width: 90%;"></div>
+    </div>
+  </div>
+  </main>
+
+<footer>
+  <p>© 2024 Meus Cursos. Todos os direitos reservados.</p>
+</footer>
 
 <script src="data.js"></script>
 <script src="theme.js"></script>
