@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>Assistir Aula</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🎓 Meus Cursos</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <span id="theme-toggle" class="theme-toggle">Tema</span>
+  </nav>
+</header>
+
+<main class="course-layout">
+  <div class="video-section">
+    <div class="video-container">
+      <h2 id="titulo"><span id="watched-check"></span></h2>
+      <iframe id="video" frameborder="0" allowfullscreen></iframe>
+    </div>
+
+    <div class="nav-buttons">
+      <button id="prev">← Aula Anterior</button>
+      <button id="back">Voltar aos Módulos</button>
+      <button id="next">Próxima Aula →</button>
+    </div>
+
+    <div class="controls-container">
+      <div class="materiais-container">
+        <h3>Materiais da Aula</h3>
+        <a id="material-link" href="#" target="_blank">Baixar Material</a>
+      </div>
+      <div class="watch-container">
+        <h3>Progresso</h3>
+        <button id="watch-toggle">Marcar como Assistida</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    </aside>
+</main>
+
+<script src="data.js"></script>
+<script src="theme.js"></script>
+<script src="aula.js"></script>
+</body>
+</html>
