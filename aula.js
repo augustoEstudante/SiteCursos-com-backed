@@ -18,6 +18,12 @@ const materialLink = document.getElementById('material-link');
 const watchToggleBtn = document.getElementById('watch-toggle'); // Novo botão
 const watchedCheckEl = document.getElementById('watched-check'); // Novo ícone no título
 
+// --- Variáveis Globais para Aulas ---
+let allLessons = [];
+let totalAulas = 0;
+// ------------------------------------
+
+
 // --- NOVAS FUNÇÕES DE "AULA ASSISTIDA" ---
 
 // Pega o objeto de progresso do localStorage
@@ -70,19 +76,33 @@ function loadAndDisplayCourse(id, initialAulaId) {
   document.body.appendChild(script);
 
   script.onload = function() {
-    const modulos = cursoData.modulos;
+    // *** CORREÇÃO: Junta todas as aulas de todos os módulos em um único array ***
+    allLessons = cursoData.modulos.reduce((acc, modulo) => {
+        if (modulo.aulas && Array.isArray(modulo.aulas)) {
+            return acc.concat(modulo.aulas);
+        }
+        return acc;
+    }, []);
+    totalAulas = allLessons.length;
+    // **************************************************************************
 
     // Adiciona o listener ao botão "Assistir"
     watchToggleBtn?.addEventListener('click', toggleWatchStatus);
 
     // 3. Função para carregar a aula (agora dentro do .onload)
     function carregarAula(index) {
-      if (index < 0 || index >= modulos.length) return; 
+      // Usa o 'totalAulas' corrigido
+      if (index < 0 || index >= totalAulas) return; 
 
-      const aula = modulos[index];
+      const aula = allLessons[index]; // Pega a aula do array 'allLessons'
       aulaId = index; 
 
-      tituloEl.innerHTML = `<span id="watched-check"></span> ${aula.titulo}`; // Recria o título
+      tituloEl.innerHTML = '';
+      const watchedCheck = document.createElement('span');
+      watchedCheck.id = 'watched-check';
+      tituloEl.appendChild(watchedCheck);
+      tituloEl.appendChild(document.createTextNode(aula.titulo));
+
       iframeEl.src = aula.url;
       document.title = aula.titulo;
 
@@ -95,8 +115,8 @@ function loadAndDisplayCourse(id, initialAulaId) {
         materialLink.href = "#";
       }
 
-      // Atualiza a sidebar
-      updateSidebar(modulos);
+      // Atualiza a sidebar (passando o array 'allLessons')
+      updateSidebar(allLessons);
       // Atualiza o botão e o ícone de "assistido"
       updateWatchUI();
       
@@ -112,7 +132,15 @@ function loadAndDisplayCourse(id, initialAulaId) {
     });
 
     nextBtn?.addEventListener('click', () => {
-      if (aulaId < modulos.length - 1) carregarAula(aulaId + 1);
+      // *** MUDANÇA: Marca como assistida ANTES de ir para a próxima ***
+      if (!isCurrentLessonWatched()) {
+        toggleWatchStatus();
+      }
+      // ***************************************************************
+
+      if (aulaId < totalAulas - 1) { // Usa 'totalAulas' corrigido
+          carregarAula(aulaId + 1);
+      }
     });
 
     backBtn?.addEventListener('click', () => {
@@ -126,31 +154,54 @@ function loadAndDisplayCourse(id, initialAulaId) {
   };
 }
 
-// NOVO: Atualiza a Sidebar (para mostrar "assistido" e "ativo")
-function updateSidebar(modulos) {
+// NOVO: Atualiza a Sidebar (para mostrar apenas aulas relevantes)
+function updateSidebar(lessons) { // 'lessons' é o array 'allLessons'
   const watchedLessons = getWatchedLessons();
   const watchedArray = watchedLessons[courseId] || [];
 
-  sidebar.innerHTML = `<h3>Aulas de ${cursoData.titulo}</h3>`;
-  modulos.forEach((m, idx) => {
-    const div = document.createElement('div');
-    div.textContent = `${idx + 1}. ${m.titulo}`;
-    
-    // Adiciona classe se for assistido
-    if (watchedArray.includes(idx)) {
-      div.classList.add('watched');
+  sidebar.innerHTML = '';
+  const h3 = document.createElement('h3');
+  h3.textContent = cursoData.titulo || "Aulas"; 
+  sidebar.appendChild(h3);
+
+  // "A aula anterior que fica em cima a aula atual e a próxima aula as duas próximas aulas."
+  const indicesToShow = [aulaId - 1, aulaId, aulaId + 1, aulaId + 2];
+
+  indicesToShow.forEach((idx) => {
+    // Verifica se o índice é válido
+    if (idx >= 0 && idx < lessons.length) {
+      const aula = lessons[idx];
+      const div = document.createElement('div');
+      
+      // Adiciona label de status
+      let label = "";
+      if (idx === aulaId - 1) {
+        label = "Anterior: ";
+      } else if (idx === aulaId) {
+        label = "Atual: ";
+      } else if (idx === aulaId + 1) {
+        label = "Próxima: ";
+      } else if (idx === aulaId + 2) {
+        label = "Seguinte: ";
+      }
+
+      div.textContent = `${label}${aula.titulo}`;
+      
+      // Adiciona classe se for assistido
+      if (watchedArray.includes(idx)) {
+        div.classList.add('watched');
+      }
+      // Adiciona classe se for a aula ATIVA
+      if (idx === aulaId) {
+        div.classList.add('active');
+      }
+      
+      div.addEventListener('click', () => {
+        // Recarrega a página com o novo aulaId
+        location.search = `courseId=${courseId}&aulaId=${idx}`; 
+      });
+      sidebar.appendChild(div);
     }
-    // Adiciona classe se for a aula ATIVA
-    if (idx === aulaId) {
-      div.classList.add('active');
-    }
-    
-    div.addEventListener('click', () => {
-      // Re-chama a função de carregar aula, que está no escopo superior
-      // (Precisa de uma refatoração melhor, mas isso funciona por agora)
-      location.search = `courseId=${courseId}&aulaId=${idx}`; 
-    });
-    sidebar.appendChild(div);
   });
 }
 
@@ -170,5 +221,8 @@ function updateWatchUI() {
   }
 
   // Atualiza a sidebar para refletir a mudança
-  updateSidebar(cursoData.modulos);
+  // (Passa o array 'allLessons' que é global)
+  if(allLessons.length > 0) {
+    updateSidebar(allLessons);
+  }
 }

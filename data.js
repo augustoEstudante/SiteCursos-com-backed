@@ -3,14 +3,14 @@ const cursos = [
     id: "matematica-basica", // ID = nome do arquivo em /cursos/
     titulo: "Matemática Básica",
     descricao: "Aprenda os fundamentos da matemática...",
-    thumbnail: "imagens/matematica.jpg",
+    thumbnail: "IMAGES_CURSOS/matematica.jpg",
     totalAulas: 3 // <<< ADICIONEI ISSO (Mude para o total real)
   },
   {
     id: "portugues-concursos", // ID = nome do arquivo em /cursos/
     titulo: "Português para Concursos",
     descricao: "Domine a gramática...",
-    thumbnail: "imagens/portugues.png",
+    thumbnail: "IMAGES_CURSOS/portugues.png",
     totalAulas: 2 // <<< ADICIONEI ISSO (Mude para o total real)
   },
   {
