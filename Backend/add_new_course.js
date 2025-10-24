@@ -1,16 +1,25 @@
+// Este é um script reutilizável para adicionar NOVOS cursos.
+// Para usar:
+// 1. Configure as seções 1 e 2 abaixo.
+// 2. Pare o servidor (Ctrl+C)
+// 3. Rode no terminal: node add_new_course.js
+// 4. Inicie o servidor novamente: node server.js
+
 const openDb = require('./database');
 
-// --- 1. DADOS BASE DO CURSO ---
-const cursoPrincipal = {
-  id: "curso-intensivo",
+// --- 1. CONFIGURE SEU NOVO CURSO AQUI ---
+const novoCurso = {
+  // --- CORREÇÃO 1: ID simplificado ---
+  id: "matematica-universo-narrado",
   titulo: "Curso de Matemática (Universo Narrado)",
-  descricao: "Curso de matemática do universo narrado",
-  thumbnail: "IMAGES_CURSOS/CURSO1.jpg"
+  descricao: "Curso de matemática basica do universo narrado, materias na primeira aula ",
+  thumbnail: "IMAGES_CURSOS/devendando-a-matematica.jpg",
+  // --- CORREÇÃO 2: Adicionado moduloUnico ---
+  moduloUnico: "Aulas de Matemática" // Nome do módulo que agrupará as aulas
 };
 
-// --- 2. LISTA DE AULAS (Títulos limpos, sem módulos) ---
-// (Copiei e limpei os títulos da sua imagem)
-const cursoIntensivoAulas = [
+// --- 2. COLE A LISTA DE AULAS AQUI ---
+const novasAulas = [
   { titulo: "Seja bem vindo!", url: "https://filemoon.sx/e/icye3mrcvcvk" },
   { titulo: "As regras do jogo", url: "https://filemoon.sx/e/r1aemkud5ugq" },
   { titulo: "Papiro de Rhind e a Matemática do Egito Antigo", url: "https://filemoon.sx/e/9v9il9sv3ace" },
@@ -94,109 +103,80 @@ const cursoIntensivoAulas = [
 ];
 
 
-// --- 3. FUNÇÃO DE SETUP ---
-async function setupDatabase() {
+// --- 3. SCRIPT (Não precisa editar daqui para baixo) ---
+(async () => {
+  if (novasAulas.length === 0 || !novoCurso.id || !novoCurso.moduloUnico) { // Verifica se moduloUnico existe
+    console.error('ERRO: Configure as seções 1 (incluindo id e moduloUnico) e 2 do script antes de rodar.');
+    return;
+  }
+
   const db = await openDb();
-  console.log('Conexão com o banco de dados estabelecida.');
+  console.log(`Iniciando adição do curso: ${novoCurso.titulo} (ID: ${novoCurso.id})`);
 
-  // Habilita chaves estrangeiras
-  await db.exec('PRAGMA foreign_keys = ON;');
-
-  console.log('Criando tabelas (se não existirem)...');
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS cursos (
-      id TEXT PRIMARY KEY NOT NULL,
-      titulo TEXT NOT NULL,
-      descricao TEXT,
-      thumbnail TEXT
-    );
-
-    CREATE TABLE IF NOT EXISTS modulos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      curso_id TEXT NOT NULL,
-      titulo TEXT NOT NULL,
-      ordem INTEGER,
-      FOREIGN KEY (curso_id) REFERENCES cursos (id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS aulas (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      modulo_id INTEGER NOT NULL,
-      titulo TEXT NOT NULL,
-      url_video TEXT,
-      materiais TEXT,
-      ordem INTEGER,
-      FOREIGN KEY (modulo_id) REFERENCES modulos (id) ON DELETE CASCADE
-    );
-    
-    CREATE TABLE IF NOT EXISTS usuarios (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      senha_hash TEXT NOT NULL
-    );
-    
-    CREATE TABLE IF NOT EXISTS progresso (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      usuario_id INTEGER NOT NULL,
-      aula_id_global INTEGER NOT NULL, 
-      course_id TEXT NOT NULL,
-      assistido_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (usuario_id) REFERENCES usuarios (id),
-      UNIQUE(usuario_id, aula_id_global, course_id)
-    );
-  `);
-  console.log('Tabelas prontas.');
-
-  // --- 4. INSERINDO OS DADOS ---
   try {
-    // Insere o curso principal
+    // Insere o curso (ou ignora se o ID já existe)
     await db.run(
       'INSERT OR IGNORE INTO cursos (id, titulo, descricao, thumbnail) VALUES (?, ?, ?, ?)',
-      cursoPrincipal.id,
-      cursoPrincipal.titulo,
-      cursoPrincipal.descricao,
-      cursoPrincipal.thumbnail
+      novoCurso.id,
+      novoCurso.titulo,
+      novoCurso.descricao,
+      novoCurso.thumbnail
     );
-    console.log('Curso principal inserido.');
+    // Verifica se o curso foi realmente inserido ou se já existia
+    const cursoExistente = await db.get('SELECT id FROM cursos WHERE id = ?', novoCurso.id);
+    if (!cursoExistente) {
+        console.error(`ERRO: Falha ao inserir curso com ID "${novoCurso.id}". Verifique os dados.`);
+        await db.close();
+        return;
+    }
+    console.log(`Curso "${novoCurso.titulo}" pronto na tabela 'cursos'.`);
 
-    // Cria um MÓDULO ÚNICO para este curso
-    const moduloResult = await db.run(
-      'INSERT INTO modulos (curso_id, titulo, ordem) VALUES (?, ?, ?)',
-      cursoPrincipal.id,
-      'Módulo Completo', // Nome do módulo único
+    // Tenta criar o Módulo Único (ou ignora se já existe para este curso)
+    await db.run(
+      'INSERT OR IGNORE INTO modulos (curso_id, titulo, ordem) VALUES (?, ?, ?)',
+      novoCurso.id,
+      novoCurso.moduloUnico,
       0
     );
-    const moduloId = moduloResult.lastID;
-    console.log(`Módulo único criado (ID: ${moduloId}).`);
 
-    // Insere todas as aulas nesse módulo
-    let aulaOrdem = 0;
-    for (const aula of cursoIntensivoAulas) {
-      await db.run(
-        'INSERT INTO aulas (modulo_id, titulo, url_video, materiais, ordem) VALUES (?, ?, ?, ?, ?)',
+    // Pega o ID do módulo (seja ele novo ou existente)
+    const modulo = await db.get('SELECT id FROM modulos WHERE curso_id = ? AND titulo = ?', novoCurso.id, novoCurso.moduloUnico);
+    if (!modulo) {
+        console.error(`ERRO: Falha ao encontrar ou criar o módulo "${novoCurso.moduloUnico}" para o curso ID "${novoCurso.id}".`);
+        await db.close();
+        return;
+    }
+    const moduloId = modulo.id;
+    console.log(`Módulo "${novoCurso.moduloUnico}" pronto (ID: ${moduloId}).`);
+
+    // Insere as aulas (ou ignora se uma aula com mesmo título já existe NESSE módulo)
+    let aulasInseridas = 0;
+    let aulaOrdem = 0; // Começa a ordem do zero
+    for (const aula of novasAulas) {
+      // Usamos INSERT OR IGNORE para evitar duplicatas baseadas no modulo_id e titulo
+      // (Você pode querer uma chave única mais robusta, como modulo_id + url_video)
+      const result = await db.run(
+        'INSERT OR IGNORE INTO aulas (modulo_id, titulo, url_video, materiais, ordem) VALUES (?, ?, ?, ?, ?)',
         moduloId,
         aula.titulo,
         aula.url,
-        aula.materiais || null, // Adiciona materiais se existirem
-        aulaOrdem
+        aula.materiais || null,
+        aulaOrdem // Usa a ordem sequencial
       );
-      aulaOrdem++;
+      if (result.changes > 0) { // Verifica se uma linha foi realmente inserida
+          aulasInseridas++;
+      }
+      aulaOrdem++; // Incrementa a ordem para a próxima aula
     }
-    console.log(`${aulaOrdem} aulas inseridas no módulo.`);
+    console.log(`${aulasInseridas} novas aulas inseridas no módulo (aulas duplicadas foram ignoradas).`);
+    console.log('-------------------------------------------');
+    console.log('Adição/Atualização do curso concluída!');
+    console.log('-------------------------------------------');
 
   } catch (e) {
-    if (e.code === 'SQLITE_CONSTRAINT') {
-      console.log('Dados já foram inseridos anteriormente.');
-    } else {
-      console.error('Erro ao inserir dados:', e.message);
-    }
+     // Erro genérico (Constraint de chave estrangeira, etc.)
+     console.error('Erro durante a operação no banco de dados:', e.message);
   }
-  
-  console.log('-------------------------------------------');
-  console.log('Configuração do banco de dados concluída!');
-  console.log('-------------------------------------------');
-  await db.close();
-}
 
-// Roda a função
-setupDatabase();
+  await db.close();
+})();
